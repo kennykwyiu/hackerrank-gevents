@@ -2,11 +2,9 @@ package com.hackerrank.gevents.service;
 
 import com.hackerrank.gevents.exception.EventNotFindException;
 import com.hackerrank.gevents.model.Actor;
-import com.hackerrank.gevents.repository.EventRepository;
-import com.hackerrank.gevents.repository.RepoRepository;
-import com.hackerrank.gevents.repository.ActorRepository;
 import com.hackerrank.gevents.model.Event;
 import com.hackerrank.gevents.model.Repo;
+import com.hackerrank.gevents.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,6 @@ import java.util.List;
 public class EventService {
     @Autowired
     private EventRepository eventRepository;
-
     @Autowired
     private ActorService actorService;
     @Autowired
