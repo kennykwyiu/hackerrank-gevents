@@ -1,4 +1,4 @@
-package com.hackerrank.gevents.service;
+package com.hackerrank.gevents.exception;
 
 public class EventNotFindException extends Exception {
     public EventNotFindException(String message) {

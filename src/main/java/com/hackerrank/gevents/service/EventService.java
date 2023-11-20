@@ -1,42 +1,44 @@
 package com.hackerrank.gevents.service;
 
+import com.hackerrank.gevents.exception.EventNotFindException;
 import com.hackerrank.gevents.model.Actor;
 import com.hackerrank.gevents.repository.EventRepository;
 import com.hackerrank.gevents.repository.RepoRepository;
 import com.hackerrank.gevents.repository.ActorRepository;
 import com.hackerrank.gevents.model.Event;
 import com.hackerrank.gevents.model.Repo;
-import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EventService {
+    @Autowired
+    private EventRepository eventRepository;
 
-    private final ActorRepository actorRepository;
-    private final RepoRepository repoRepository;
-    private final EventRepository eventRepository;
+    @Autowired
+    private ActorService actorService;
+    @Autowired
+    private RepoService repoService;
 
-    public EventService(ActorRepository actorRepository,
-                        RepoRepository repoRepository,
-                        EventRepository eventRepository) {
-        this.actorRepository = actorRepository;
-        this.repoRepository = repoRepository;
-        this.eventRepository = eventRepository;
-    }
 
-    public Event createEvent(Event event) {
+    public Event createEvent(Event event) throws EventNotFindException {
 
-        Actor actor = Actor.builder().build();
-        actorRepository.save(actor);
-        Repo repo = Repo.builder().build();
-        repoRepository.save(repo);
+        Integer actorId = event.getActorId();
+        Actor actor = actorService.findByActorId(actorId)
+                .orElseThrow(() -> new EventNotFindException(
+                        String.format("Event not found by s%", actorId)
+                ));
+        Integer repoId = event.getRepoId();
+        Repo repo = repoService.findByRepoId(repoId)
+                .orElseThrow(() -> new EventNotFindException(
+                        String.format("Event not found by s%", repoId)
+                ));
 
         Event createdEvent = Event.builder()
-                .repoId(event.getRepoId())
-                .actorId(event.getActorId())
+                .repoId(repoId)
+                .actorId(actorId)
                 .isPublic(true)
                 .type(event.getType())
                 .build();

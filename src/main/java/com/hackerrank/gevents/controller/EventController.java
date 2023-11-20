@@ -1,17 +1,18 @@
 package com.hackerrank.gevents.controller;
 
 import com.hackerrank.gevents.dto.EventResponseDTO;
+import com.hackerrank.gevents.exception.InvalidEventTypeException;
 import com.hackerrank.gevents.factory.EventDTOFactory;
 import com.hackerrank.gevents.model.Event;
-import com.hackerrank.gevents.service.EventNotFindException;
+import com.hackerrank.gevents.exception.EventNotFindException;
 import com.hackerrank.gevents.service.EventService;
+import com.hackerrank.gevents.utils.ServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/events")
@@ -23,14 +24,14 @@ public class EventController {
     private EventDTOFactory eventDTOFactory;
 
     @PostMapping
-    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody Event event) {
+    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody Event event) throws EventNotFindException, InvalidEventTypeException {
         String eventType = event.getType();
-        if (!isValidaEventType(eventType)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        ServiceUtils.validateEventType(eventType);
+
         Event createdEvent = eventService.createEvent(event);
         EventResponseDTO responseDTO = eventDTOFactory.toDTO(createdEvent);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
     }
 
     private boolean isValidaEventType(String eventType) {
@@ -47,10 +48,10 @@ public class EventController {
 
     @GetMapping("/repos/{repoId}/events")
     public ResponseEntity<List<EventResponseDTO>> getRepoEvents(@PathVariable Integer repoId) {
-       List<EventResponseDTO> eventResponseDTOList = eventService.getByRepoId(repoId).stream()
-               .map(eventDTOFactory::toDTO)
-               .toList();
-       return ResponseEntity.status(HttpStatus.OK).body(eventResponseDTOList);
+        List<EventResponseDTO> eventResponseDTOList = eventService.getByRepoId(repoId).stream()
+                .map(eventDTOFactory::toDTO)
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(eventResponseDTOList);
     }
 
 
