@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Builder;
 
 @Entity
 public class Event {
@@ -19,6 +20,7 @@ public class Event {
 
     }
 
+    @Builder
     public Event(Integer id, String type, Boolean isPublic, Integer repoId, Integer actorId) {
         this.id = id;
         this.type = type;
@@ -27,6 +29,7 @@ public class Event {
         this.actorId = actorId;
     }
 
+    @Builder
     public Event(String type, Boolean isPublic, Integer repoId, Integer actorId) {
         this.type = type;
         this.isPublic = isPublic;
