@@ -60,4 +60,8 @@ public class EventService {
                         String.format("Event not found by: %s", eventId)));
         return event;
     }
+
+    public List<Event> findByUserId(Integer userId) {
+        return eventRepository.findAllByActorId(userId);
+    }
 }

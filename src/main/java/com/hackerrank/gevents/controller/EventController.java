@@ -24,7 +24,9 @@ public class EventController {
     private EventDTOFactory eventDTOFactory;
 
     @PostMapping
-    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody Event event) throws EventNotFindException, InvalidEventTypeException {
+    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody Event event)
+            throws EventNotFindException, InvalidEventTypeException {
+
         String eventType = event.getType();
         ServiceUtils.validateEventType(eventType);
 
@@ -56,8 +58,11 @@ public class EventController {
 
 
     @GetMapping("/repos/{userId}/events")
-    public ResponseEntity<EventResponseDTO> getUserEvents(@PathVariable Integer userId) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<EventResponseDTO>> getUserEvents(@PathVariable Integer userId) {
+        List<EventResponseDTO> eventResponseDTOList = eventService.findByUserId(userId).stream()
+                .map(eventDTOFactory::toDTO)
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(eventResponseDTOList);
     }
 
     @GetMapping("/{eventId}")

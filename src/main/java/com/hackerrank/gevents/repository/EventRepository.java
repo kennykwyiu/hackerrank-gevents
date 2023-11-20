@@ -11,4 +11,6 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
 
 
     List<Event> findAllByRepoId(Integer repoId);
+
+    List<Event> findAllByActorId(Integer userId);
 }
