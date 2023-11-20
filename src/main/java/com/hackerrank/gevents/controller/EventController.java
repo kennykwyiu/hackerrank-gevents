@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events")
 public class EventController {
     @Autowired
     private EventService eventService;
@@ -23,7 +22,7 @@ public class EventController {
     @Autowired
     private EventDTOFactory eventDTOFactory;
 
-    @PostMapping
+    @PostMapping("/events")
     public ResponseEntity<EventResponseDTO> createEvent(@RequestBody Event event)
             throws EventNotFindException, InvalidEventTypeException {
 
@@ -40,7 +39,7 @@ public class EventController {
         return eventType.equals("PushEvent") || eventType.equals("ReleaseEvent") || eventType.equals("WatchEvent");
     }
 
-    @GetMapping
+    @GetMapping("/events")
     public ResponseEntity<List<EventResponseDTO>> getAllEvents() {
         List<EventResponseDTO> responseDTOList = eventService.findAll().stream()
                 .map(eventDTOFactory::toDTO)
@@ -57,7 +56,7 @@ public class EventController {
     }
 
 
-    @GetMapping("/repos/{userId}/events")
+    @GetMapping("/users/{userId}/events")
     public ResponseEntity<List<EventResponseDTO>> getUserEvents(@PathVariable Integer userId) {
         List<EventResponseDTO> eventResponseDTOList = eventService.findByUserId(userId).stream()
                 .map(eventDTOFactory::toDTO)
@@ -65,7 +64,7 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(eventResponseDTOList);
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping("/events/{eventId}")
     public ResponseEntity<EventResponseDTO> getEventById(@PathVariable Integer eventId) throws EventNotFindException {
         Event event = eventService.findByEventId(eventId);
         EventResponseDTO eventResponseDTO = eventDTOFactory.toDTO(event);
