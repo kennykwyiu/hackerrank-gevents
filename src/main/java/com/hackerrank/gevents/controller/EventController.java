@@ -1,5 +1,6 @@
 package com.hackerrank.gevents.controller;
 
+import com.hackerrank.gevents.dto.EventRequestDTO;
 import com.hackerrank.gevents.dto.EventResponseDTO;
 import com.hackerrank.gevents.exception.InvalidEventTypeException;
 import com.hackerrank.gevents.factory.EventDTOFactory;
@@ -23,11 +24,13 @@ public class EventController {
     private EventDTOFactory eventDTOFactory;
 
     @PostMapping("/events")
-    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody Event event)
+    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody EventRequestDTO requestDTO)
             throws EventNotFindException, InvalidEventTypeException {
 
-        String eventType = event.getType();
+        String eventType = requestDTO.getType();
         ServiceUtils.validateEventType(eventType);
+
+        Event event = eventDTOFactory.toEntity(requestDTO);
 
         Event createdEvent = eventService.createEvent(event);
         EventResponseDTO responseDTO = eventDTOFactory.toDTO(createdEvent);
